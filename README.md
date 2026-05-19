@@ -285,17 +285,29 @@ PR_PROJECT.ipynb
 
 📁 Project Structure
 
+
 plant-disease-detection/
+
 │
+
 ├── dataset/
+
 ├── train/
+
 ├── valid/
+
 ├── test/
+
 ├── models/
+
 ├── results/
+
 ├── PR_PROJECT.ipynb
+
 ├── requirements.txt
+
 └── README.md
+
 🌍 Applications
 
 This project can be used in:
