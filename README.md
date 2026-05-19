@@ -1,332 +1,256 @@
-# Pattern-Recognition-Computer-Vision
-
-import os
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten
-from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
-from tensorflow.keras.optimizers import Adam
-from sklearn.model_selection import train_test_split
-from ultralytics import YOLO
-import yaml
-
-data_yaml = {
-    "path": "/content/dataset_final",
-    "train": "train/images",
-    "val": "valid/images",
-    "test": "test/images",
-
-    "names": [
-        'Chili___Anthracnose_fruit',
-        'Chili___Bacterial_leaf_spot',
-        'Chili___Healthy_fruit',
-        'Chili___Healthy_leaf',
-        'Chili___Mosaic_virus_leaf',
-        'Eggplant___Cercospora_leaf_spot',
-        'Eggplant___Colorado_potato_beetle',
-        'Eggplant___Fruit_rot',
-        'Eggplant___Healthy_fruit',
-        'Eggplant___Healthy_leaf',
-        'Potato___Alternaria_solani_leaf',
-        'Potato___Common_scab_fruit',
-        'Potato___Healthy_fruit',
-        'Potato___Healthy_leaf',
-        'Potato___Phytopthora_infestans_leaf',
-        'Tomato___Antrhacnose_fruit',
-        'Tomato___Bacterial_spot_leaf',
-        'Tomato___Early_blight_leaf',
-        'Tomato___Healthy_fruit',
-        'Tomato___Healthy_leaf',
-        'Tomato___Late_blight_leaf',
-        'Tomato___Leaf_mold',
-        'Tomato___Tomato_yellow_leaf_curl_virus'
-    ]
-}
-
-with open("/content/dataset_final/data.yaml", "w") as f:
-    yaml.dump(data_yaml, f)
-
-print("data.yaml")
-from ultralytics import YOLO
-
-model = YOLO("yolov8s.pt")
-
-model.train(
-    data="/content/dataset_final/data.yaml",
-    epochs=50,
-    imgsz=320,
-    batch=16,
-
-    device=0,
-
-    optimizer="AdamW",
-    lr0=0.001,
-
-    patience=10,
-
-)
-from ultralytics import YOLO
-
-# Augmentation Settings
-aug_params = {
-    "fliplr": 0.0,
-    "flipud": 0.0,
-
-    "hsv_h": 0.015,
-    "hsv_s": 0.7,
-    "hsv_v": 0.4,
-
-    "degrees": 10,
-    "scale": 0.5,
-    "translate": 0.1,
-
-    "mosaic": 1.0
-}
-
-model = YOLO("yolov8s.pt")
-
-# experiment / training
-results = model.train(
-    data="/content/dataset_final/data.yaml",
-    epochs=50,
-    imgsz=320,
-    batch=16,
-
-    **aug_params,
-
-    project="augmentation_experiments",
-    name="exp_no_flip",
-    save=True
-)
+🌱 Plant Disease Detection using Deep Learning & YOLOv8
+📌 Introduction
 
-print("Experiment finished")
-from ultralytics import YOLO
-import matplotlib.pyplot as plt
-from PIL import Image
-import os
+Plant diseases are one of the biggest challenges in agriculture because they directly affect crop quality and productivity. Early disease detection can help farmers reduce losses and improve crop management.
 
-# Load model
-model = YOLO("/content/best (4).pt")
+This project presents an AI-based solution for detecting and classifying plant diseases using Deep Learning and Computer Vision techniques.
 
-# Predict on external test images
-model.predict(
-    source="/content/test_img",
-    save=True,
-    conf=0.25
-)
+The project combines:
 
-# Show prediction results
-predict_path = "/content/runs/detect/predict"
+CNN (Convolutional Neural Networks) for image classification
+YOLOv8 for object detection and localization
 
-for img_name in os.listdir(predict_path):
+The system analyzes plant leaf images, predicts the disease type, and detects infected regions automatically.
+🎯 Project Objectives
 
-    if img_name.endswith(('.jpg', '.png', '.jpeg')):
+The main objectives of this project are:
 
-        img_path = os.path.join(predict_path, img_name)
+Detect plant diseases automatically from leaf images
+Improve disease diagnosis accuracy using Deep Learning
+Reduce manual inspection effort in agriculture
+Apply image preprocessing and augmentation techniques
+Train and evaluate CNN and YOLOv8 models
+Visualize model performance using graphs and metrics
+🧠 Deep Learning Concepts Used
 
-        image = Image.open(img_path)
+This project includes several important AI and Deep Learning concepts such as:
 
-        plt.figure(figsize=(10,8))
-        plt.imshow(image)
-        plt.axis("off")
-        plt.title(img_name)
-        plt.show()
+🔹 Convolutional Neural Networks (CNN)
 
-# Evaluation Metrics
-results = model.val(data="/content/dataset_final/data.yaml")
+CNN is used for extracting features from leaf images and classifying diseases.
 
-print("\nEvaluation Metrics:\n")
+🔹 YOLOv8 Object Detection
 
-print(f"Precision: {results.box.mp:.4f}")
-print(f"Recall: {results.box.mr:.4f}")
-print(f"mAP@0.5: {results.box.map50:.4f}")
-from ultralytics import YOLO
-import matplotlib.pyplot as plt
-from PIL import Image
-import os
+YOLOv8 is used to:
 
-# Load model
-model = YOLO("/content/best (5).pt")
+Detect infected areas
+Draw bounding boxes around diseases
+Localize disease regions in the image
+🔹 Data Augmentation
 
-# Predict on external test images
-model.predict(
-    source="/content/test_img",
-    save=True,
-    conf=0.25
-)
+Used to improve generalization and reduce overfitting through:
 
-# Show prediction results
-predict_path = "/content/runs/detect/predict"
+Rotation
+Zoom
+Horizontal flipping
+Rescaling
+🔹 Batch Normalization
 
-for img_name in os.listdir(predict_path):
+Helps stabilize and speed up training.
 
-    if img_name.endswith(('.jpg', '.png', '.jpeg')):
+🔹 Dropout
 
-        img_path = os.path.join(predict_path, img_name)
+Used to reduce overfitting by randomly disabling neurons during training.
 
-        image = Image.open(img_path)
+🔹 Optimizers
 
-        plt.figure(figsize=(10,8))
-        plt.imshow(image)
-        plt.axis("off")
-        plt.title(img_name)
-        plt.show()
+The project uses optimizers like:
 
-# Evaluation Metrics
-results = model.val(data="/content/dataset_final/data.yaml")
+Adam
+SGD
+📂 Dataset
 
-print("\nEvaluation Metrics:\n")
+The dataset contains plant leaf images for:
 
-print(f"Precision: {results.box.mp:.4f}")
-print(f"Recall: {results.box.mr:.4f}")
-print(f"mAP@0.5: {results.box.map50:.4f}")
-import os
-import cv2
-import pandas as pd
-from ultralytics import YOLO
+Healthy plants
+Diseased plants
 
-model = YOLO("/content/best (5).pt")
+The images are divided into:
 
-folder_path = "/content/dataset_final/test/images"
+Training set
+Validation set
+Testing set
 
-output_folder = "results"
-os.makedirs(output_folder, exist_ok=True)
+The dataset is preprocessed before training to improve model performance.
 
-data = []
+⚙️ Data Preprocessing
 
-for img_name in os.listdir(folder_path):
-    img_path = os.path.join(folder_path, img_name)
+Several preprocessing techniques are applied before training:
 
-    image = cv2.imread(img_path)
+✅ Image Resizing
 
-    if image is None:
-        continue
+All images are resized to a fixed size to fit the neural network input.
 
-    h, w, _ = image.shape
-    image_area = h * w
+✅ Normalization
 
-    results = model(image)
-    boxes = results[0].boxes
+Pixel values are normalized between 0 and 1.
 
-    count = len(boxes)
-    total_disease_area = 0
+✅ Data Augmentation
 
-    if count == 0:
-        level = "No Disease"
-    else:
-        for box in boxes:
+Additional modified images are generated to improve model robustness.
 
-            x1, y1, x2, y2 = box.xyxy[0]
-            cls = int(box.cls[0])
-            label_name = model.names[cls]
+🛠️ Technologies & Libraries Used
+💻 Programming Language
+Python
+📚 Libraries
+TensorFlow
+Keras
+PyTorch
+OpenCV
+NumPy
+Pandas
+Matplotlib
+Scikit-learn
+Ultralytics YOLOv8
+☁️ Development Environment
+Google Colab
+Jupyter Notebook
+🧱 CNN Model Architecture
 
-            if "Healthy" in label_name:
-                continue
+The CNN architecture includes:
 
-            box_area = (x2 - x1) * (y2 - y1)
-            total_disease_area += box_area
+Convolution Layers
+ReLU Activation Function
+MaxPooling Layers
+Batch Normalization
+Dropout Layers
+Fully Connected Dense Layers
+Softmax Output Layer
 
-            x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
-            conf = float(box.conf[0])
+The model is trained using:
 
-            label = f"{label_name} {conf:.2f}"
+Categorical Crossentropy Loss
+Adam Optimizer
+🚀 Project Workflow
+Step 1 — Import Libraries
 
-            cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.putText(image, label, (x1, y1 - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+Necessary libraries for Deep Learning and image processing are imported.
 
-        if total_disease_area == 0:
-            level = "No Disease"
-        else:
-            severity = total_disease_area / image_area
+Step 2 — Load Dataset
 
-            if severity < 0.1:
-                level = "Mild"
-            elif severity < 0.3:
-                level = "Moderate"
-            else:
-                level = "Severe"
+The dataset is loaded from directories.
 
-    cv2.putText(image, f"Count: {count}", (10, 25),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-    cv2.putText(image, f"Severity: {level}", (10, 55),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+Step 3 — Preprocess Images
 
-    save_path = os.path.join(output_folder, img_name)
-    cv2.imwrite(save_path, image)
+Images are resized, normalized, and augmented.
 
-    data.append([img_name, count, level])
+Step 4 — Split Dataset
 
-df = pd.DataFrame(data, columns=["Image", "Count", "Severity"])
+The dataset is divided into:
 
-print("\nResults Table:\n")
-print(df)
+Training Data
+Validation Data
+Testing Data
+Step 5 — Build CNN Model
 
-df.to_csv("results.csv", index=False)
-import cv2
-import matplotlib.pyplot as plt
-import os
-import pandas as pd
+The CNN architecture is created using Keras.
 
-results_folder = "results"
+Step 6 — Train the Model
 
-no_disease = df[df["Severity"] == "No Disease"].head(2)
-mild = df[df["Severity"] == "Mild"].tail(1)
-moderate = df[df["Severity"] == "Moderate"].tail(1)
-severe = df[df["Severity"] == "Severe"].tail(1)
-selected = pd.concat([no_disease, mild, moderate , severe])
+The model is trained on plant disease images.
 
-plt.figure(figsize=(10, 6))
+Step 7 — Evaluate Performance
 
-for i, (_, row) in enumerate(selected.iterrows()):
-    img_name = row["Image"]
-    severity = row["Severity"]
+Accuracy and loss are calculated.
 
-    img_path = os.path.join(results_folder, img_name)
-    image = cv2.imread(img_path)
+Step 8 — Visualize Results
 
-    if image is None:
-        print("Error loading:", img_name)
-        continue
+Graphs for training and validation performance are plotted.
 
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+Step 9 — YOLOv8 Detection
 
-    plt.subplot(2, 3, i + 1)
-    plt.imshow(image)
-    plt.title(severity)
-    plt.axis("off")
+YOLOv8 is trained to detect infected regions on leaves.
 
-plt.tight_layout()
-plt.show()
-import matplotlib.pyplot as plt
+📊 Model Evaluation
 
-severity_counts = df["Severity"].value_counts()
+The project evaluates performance using:
 
-plt.figure(figsize=(6,4))
-plt.bar(severity_counts.index, severity_counts.values)
+✅ Accuracy
 
-plt.title("Severity Distribution")
-plt.xlabel("Severity Level")
-plt.ylabel("Number of Images")
+Measures correct predictions percentage.
 
-plt.show()
-plt.figure(figsize=(6,6))
+✅ Loss
 
-plt.pie(
-    severity_counts.values,
-    labels=severity_counts.index,
-    autopct='%1.1f%%'
-)
+Measures prediction error during training.
 
-plt.title("Severity Percentage Distribution")
-plt.show()
-import seaborn as sns
+✅ Validation Accuracy
 
-plt.figure(figsize=(6,4))
-sns.boxplot(x="Severity", y="Count", data=df)
+Shows model performance on unseen data.
 
-plt.title("Object Count per Severity Level")
-plt.show()
+✅ Detection Results
+
+Displays bounding boxes around infected areas.
+
+📈 Visualization
+
+The project generates several graphs including:
+
+Training Accuracy Graph
+Validation Accuracy Graph
+Training Loss Graph
+Validation Loss Graph
+
+These graphs help analyze:
+
+Model learning progress
+Overfitting
+Underfitting
+🌿 YOLOv8 Detection
+
+YOLOv8 is used for:
+
+Disease localization
+Bounding box generation
+Real-time object detection
+
+The detection model predicts:
+
+Disease class
+Confidence score
+Coordinates of infected areas
+📸 Sample Output
+
+The final output includes:
+
+Predicted disease type
+Confidence score
+Bounding boxes around infected regions
+▶️ Installation & Setup
+1️⃣ Clone Repository
+git clone https://github.com/your-username/plant-disease-detection.git
+2️⃣ Open Project Folder
+cd plant-disease-detection
+3️⃣ Install Requirements
+pip install -r requirements.txt
+4️⃣ Run Jupyter Notebook
+jupyter notebook
+
+Open:
+
+PR_PROJECT.ipynb
+📁 Project Structure
+plant-disease-detection/
+│
+├── dataset/
+├── train/
+├── valid/
+├── test/
+├── models/
+├── results/
+├── PR_PROJECT.ipynb
+├── requirements.txt
+└── README.md
+🌍 Applications
+
+This project can be used in:
+
+Smart Agriculture
+Precision Farming
+Agricultural Monitoring Systems
+Automated Crop Inspection
+
+Results
+Precision increased from 97.10% to 97.49%
+Recall improved from 97.20% to 97.97%
+mAP@50 increased from 98% to 98.97%
+mAP@50-95 improved from 71.60% to 74.17%
