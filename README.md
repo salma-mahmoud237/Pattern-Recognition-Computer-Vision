@@ -215,15 +215,9 @@ The final output includes:
 Predicted disease type
 Confidence score
 Bounding boxes around infected regions
-▶️ Installation & Setup
-1️⃣ Clone Repository
-git clone https://github.com/your-username/plant-disease-detection.git
-2️⃣ Open Project Folder
-cd plant-disease-detection
-3️⃣ Install Requirements
-pip install -r requirements.txt
-4️⃣ Run Jupyter Notebook
-jupyter notebook
+
+Dataset Link:
+https://universe.roboflow.com/plant-disease-qn8xm/plant-disease-detection-4htzn
 
 Open:
 
