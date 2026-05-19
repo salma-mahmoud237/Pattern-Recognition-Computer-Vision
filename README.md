@@ -1,4 +1,5 @@
 🌱 Plant Disease Detection using Deep Learning & YOLOv8
+
 📌 Introduction
 
 Plant diseases are one of the biggest challenges in agriculture because they directly affect crop quality and productivity. Early disease detection can help farmers reduce losses and improve crop management.
